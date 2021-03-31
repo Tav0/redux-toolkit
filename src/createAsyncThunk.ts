@@ -64,7 +64,7 @@ export const miniSerializeError = (value: any): SerializedError => {
   return { message: String(value) }
 }
 
-type AsyncThunkConfig = {
+export type AsyncThunkConfig = {
   state?: unknown
   dispatch?: Dispatch
   extra?: unknown
