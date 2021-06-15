@@ -412,6 +412,8 @@ If you want to use the AbortController to react to \`abort\` events, please cons
 
       const promise = (async function() {
         let finalAction: ReturnType<typeof fulfilled | typeof rejected>
+        let finalError: Error | undefined = undefined
+
         try {
           if (
             options &&
@@ -448,6 +450,7 @@ If you want to use the AbortController to react to \`abort\` events, please cons
           ])
         } catch (err) {
           finalAction = rejected(err, requestId, arg)
+          finalError = err
         }
         // We dispatch the result action _after_ the catch, to avoid having any errors
         // here get swallowed by the try/catch block,
@@ -462,7 +465,12 @@ If you want to use the AbortController to react to \`abort\` events, please cons
 
         if (!skipDispatch) {
           dispatch(finalAction)
+
+          if (finalError) {
+            throw finalAction
+          }
         }
+
         return finalAction
       })()
       return Object.assign(promise, { abort, requestId, arg })
